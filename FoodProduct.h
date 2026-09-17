@@ -18,7 +18,8 @@ public:
     {
     }
 
-    FoodProduct(int id, string name, double price, int quantity, string expiryDate)
+    FoodProduct(int id, string name, double price, int quantity,
+                string expiryDate)
         : Product(id, name, price, quantity)
     {
         this->expiryDate = expiryDate;

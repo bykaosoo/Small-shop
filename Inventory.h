@@ -7,6 +7,8 @@
 #include <limits>
 
 #include "Product.h"
+#include "FoodProduct.h"
+#include "ElectronicProduct.h"
 
 using namespace std;
 
@@ -16,6 +18,7 @@ private:
     vector<Product*> products;
 
 public:
+
     Inventory()
     {
     }
@@ -59,20 +62,130 @@ public:
         return nullptr;
     }
 
+    void addFoodProduct()
+    {
+        int id;
+        string name;
+        double price;
+        int quantity;
+        string expiryDate;
+
+        cout << "\n=================================\n";
+        cout << "        ADD FOOD PRODUCT\n";
+        cout << "=================================\n";
+
+        cout << "Enter Product ID: ";
+        cin >> id;
+
+        if (idExists(id))
+        {
+            cout << "Product ID already exists.\n";
+            return;
+        }
+
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+        cout << "Enter Product Name: ";
+        getline(cin, name);
+
+        cout << "Enter Price: ";
+        cin >> price;
+
+        cout << "Enter Quantity: ";
+        cin >> quantity;
+
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+        cout << "Enter Expiry Date: ";
+        getline(cin, expiryDate);
+
+        FoodProduct* product =
+            new FoodProduct(
+                id,
+                name,
+                price,
+                quantity,
+                expiryDate
+            );
+
+        products.push_back(product);
+
+        cout << "\nFood product added successfully.\n";
+    }
+
+    void addElectronicProduct()
+    {
+        int id;
+        string name;
+        double price;
+        int quantity;
+        string brand;
+        int warrantyMonths;
+
+        cout << "\n=================================\n";
+        cout << "     ADD ELECTRONIC PRODUCT\n";
+        cout << "=================================\n";
+
+        cout << "Enter Product ID: ";
+        cin >> id;
+
+        if (idExists(id))
+        {
+            cout << "Product ID already exists.\n";
+            return;
+        }
+
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+        cout << "Enter Product Name: ";
+        getline(cin, name);
+
+        cout << "Enter Price: ";
+        cin >> price;
+
+        cout << "Enter Quantity: ";
+        cin >> quantity;
+
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+        cout << "Enter Brand: ";
+        getline(cin, brand);
+
+        cout << "Enter Warranty (months): ";
+        cin >> warrantyMonths;
+
+        ElectronicProduct* product =
+            new ElectronicProduct(
+                id,
+                name,
+                price,
+                quantity,
+                brand,
+                warrantyMonths
+            );
+
+        products.push_back(product);
+
+        cout << "\nElectronic product added successfully.\n";
+    }
+
     void viewProducts()
     {
         if (products.empty())
         {
-            cout << "Inventory is empty.\n";
+            cout << "\nInventory is empty.\n";
             return;
         }
 
-        cout << "\n========== PRODUCT LIST ==========\n";
+        cout << "\n=================================\n";
+        cout << "          PRODUCT LIST\n";
+        cout << "=================================\n";
 
         for (Product* product : products)
         {
             product->displayInfo();
-            cout << "-----------------------------\n";
+
+            cout << "---------------------------------\n";
         }
     }
 
@@ -80,7 +193,7 @@ public:
     {
         int id;
 
-        cout << "Enter Product ID to search: ";
+        cout << "\nEnter Product ID to search: ";
         cin >> id;
 
         Product* product = findProduct(id);
@@ -100,7 +213,7 @@ public:
     {
         int id;
 
-        cout << "Enter Product ID to update: ";
+        cout << "\nEnter Product ID to update: ";
         cin >> id;
 
         Product* product = findProduct(id);
@@ -130,17 +243,19 @@ public:
         product->setPrice(price);
         product->setQuantity(quantity);
 
-        cout << "Product updated successfully.\n";
+        cout << "\nProduct updated successfully.\n";
     }
 
     void deleteProduct()
     {
         int id;
 
-        cout << "Enter Product ID to delete: ";
+        cout << "\nEnter Product ID to delete: ";
         cin >> id;
 
-        for (auto it = products.begin(); it != products.end(); ++it)
+        for (auto it = products.begin();
+             it != products.end();
+             ++it)
         {
             if ((*it)->getId() == id)
             {
@@ -160,7 +275,7 @@ public:
         int id;
         int quantity;
 
-        cout << "Enter Product ID: ";
+        cout << "\nEnter Product ID: ";
         cin >> id;
 
         Product* product = findProduct(id);
@@ -174,7 +289,9 @@ public:
         cout << "Enter quantity to add: ";
         cin >> quantity;
 
-        product->setQuantity(product->getQuantity() + quantity);
+        product->setQuantity(
+            product->getQuantity() + quantity
+        );
 
         cout << "Product restocked successfully.\n";
     }
@@ -183,14 +300,18 @@ public:
     {
         bool found = false;
 
-        cout << "\n========== LOW STOCK ==========\n";
+        cout << "\n=================================\n";
+        cout << "           LOW STOCK\n";
+        cout << "=================================\n";
 
         for (Product* product : products)
         {
             if (product->getQuantity() <= 5)
             {
                 product->displayInfo();
-                cout << "-----------------------------\n";
+
+                cout << "---------------------------------\n";
+
                 found = true;
             }
         }
@@ -201,11 +322,20 @@ public:
         }
     }
 
-    bool purchaseProduct(int id, int quantity, double& total)
+    bool purchaseProduct(
+        int id,
+        int quantity,
+        double& total
+    )
     {
         Product* product = findProduct(id);
 
         if (product == nullptr)
+        {
+            return false;
+        }
+
+        if (quantity <= 0)
         {
             return false;
         }
